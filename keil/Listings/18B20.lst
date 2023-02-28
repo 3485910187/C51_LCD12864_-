@@ -1,0 +1,175 @@
+C51 COMPILER V9.59.0.0   18B20                                                             02/27/2023 11:27:36 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE 18B20
+OBJECT MODULE PLACED IN .\Objects\18B20.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE 18B20.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\18B
+                    -20.lst) TABS(2) OBJECT(.\Objects\18B20.obj)
+
+line level    source
+
+   1          #include <reg51.h>    
+   2          #include "18b20.h"
+   3          
+   4          /*****************************************************
+   5          函数功能：将DS18B20传感器初始化，读取应答信号
+   6          入口参数：无
+   7          返回参数：dat -是否存在的标志，dat=0，表示存在；dat=1，表示不存在
+   8          使用方法：初始化-在其它函数中有调用，用于识别18B20是否存在
+   9          ***************************************************/
+  10          bit Init_DS18B20(void)  
+  11          {
+  12   1         bit dat=0;
+  13   1         DQ = 1;   
+  14   1         DelayUs(5);      //稍做延时
+  15   1         DQ = 0;        
+  16   1         DelayUs(200); 
+  17   1         DelayUs(200);    //精确延时：480us~960us   约810us
+  18   1         DQ = 1;          
+  19   1         DelayUs(40);//***80us以内:太短255（或-1）；150us以上死循环，根据晶振调整****
+  20   1         dat=DQ;       
+  21   1         DelayUs(25);     //稍作延时,给硬件一点反应时间
+  22   1         return dat;
+  23   1      }
+  24          /*****************************************************
+  25          函数功能：从DS18B20读取一个字节数据
+  26          入口参数：无
+  27          返回参数：dat-读出的一个字节数据
+  28          ***************************************************/ 
+  29          unsigned char ReadOneChar(void)
+  30           {
+  31   1          unsigned char i=0;
+  32   1          unsigned char dat = 0;
+  33   1          for (i=8;i>0;i--)
+  34   1           {
+  35   2              DQ = 0; // 给脉冲信号
+  36   2              dat>>=1;//先低后高
+  37   2              DQ = 1; // 给脉冲信号
+  38   2              if(DQ)dat|=0x80;
+  39   2              DelayUs(25);//***延时47us以上，根据晶振调整，此处约55us***
+  40   2           }
+  41   1           return(dat);
+  42   1      }
+  43          /*****************************************************
+  44          函数功能：向DS18B20写入一个字节控制数据
+  45          入口参数：dat-要写的命令
+  46          返回参数：无
+  47          ***************************************************/  
+  48          void WriteOneChar(unsigned char dat)
+  49          {
+  50   1        unsigned char i=0;
+  51   1         for (i=8; i>0; i--)
+  52   1         {
+  53   2            DQ = 0;
+  54   2            DelayUs(5);//延时确定15us
+C51 COMPILER V9.59.0.0   18B20                                                             02/27/2023 11:27:36 PAGE 2   
+
+  55   2            DQ = dat&0x01;
+  56   2            DelayUs(5);//***采样数据，0：延时0~45us；1：延时0~35us，根据晶振调整，此处约15us***
+  57   2            DQ = 1;
+  58   2            dat>>=1;
+  59   2         }
+  60   1        DelayUs(25);//稍作延时,给硬件一点反应时间
+  61   1      } 
+  62          
+  63          /*****************************************************
+  64          函数功能: 读芯片ROM
+  65          入口参数：无
+  66          返回参数：64位ROM数值
+  67          //产品类型标号28H，芯片序列号48位，CRC校验码
+  68          使用方法：根据需要调用
+  69          ***************************************************/ 
+  70          unsigned char* Read_ROM(void)
+  71          {
+  72   1        Init_DS18B20();
+  73   1        WriteOneChar(0x33);//读ROM
+  74   1        DelayMs(10);
+  75   1        ROM_data[0] = ReadOneChar();
+  76   1        ROM_data[1] = ReadOneChar();
+  77   1        ROM_data[2] = ReadOneChar();
+  78   1        ROM_data[3] = ReadOneChar();
+  79   1        ROM_data[4] = ReadOneChar();
+  80   1        ROM_data[5] = ReadOneChar();
+  81   1        ROM_data[6] = ReadOneChar();
+  82   1        ROM_data[7] = ReadOneChar();
+  83   1        return (ROM_data);
+  84   1      }
+  85          
+  86          /*****************************************************
+  87          函数功能: 单个芯片根据序列号读温度
+  88          入口参数：无
+  89          返回参数：t-16位温度数值
+  90          使用方法：初始化
+  91          ***************************************************/ 
+  92          unsigned int ReadTemperature_s(void)
+  93          {
+  94   1          unsigned char a=0;
+  95   1          unsigned int b=0;
+  96   1          unsigned int t=0;
+  97   1        
+  98   1          Init_DS18B20();
+  99   1          WriteOneChar(0xCC); // 跳过读序列号的操作 
+ 100   1          WriteOneChar(0x44); // 启动温度转换   
+ 101   1          DelayMs(800);//（默认）12位分辨率，温度转换时间超过750ms
+ 102   1        
+ 103   1          Init_DS18B20();
+ 104   1          WriteOneChar(0xCC);// 跳过读序列号的操作  
+ 105   1          WriteOneChar(0xBE); //读取温度寄存器,前两个分别是温度的低位和高位 
+ 106   1        
+ 107   1          a=ReadOneChar();   //低位
+ 108   1          b=ReadOneChar();   //高位
+ 109   1          b<<=8;
+ 110   1          t=a|b;
+ 111   1          return(t);
+ 112   1      }
+ 113          /*****************************************************
+ 114          函数功能: 一个IO口连接多个芯片时，根据序列号读温度
+ 115          入口参数：ROM_D-芯片序列号
+ 116          返回参数：t-16位温度数值
+C51 COMPILER V9.59.0.0   18B20                                                             02/27/2023 11:27:36 PAGE 3   
+
+ 117          使用方法：初始化
+ 118          ***************************************************/ 
+ 119          unsigned int ReadTemperature_m(unsigned char* ROM_D)
+ 120          {
+ 121   1          unsigned char i,a=0;
+ 122   1          unsigned int b=0;
+ 123   1          unsigned int t=0;
+ 124   1        
+ 125   1          Init_DS18B20(); 
+ 126   1          WriteOneChar(0x55); // 匹配序列号的操作,后紧跟64位ROM数据
+ 127   1          for(i=0;i<8;i++)
+ 128   1          {
+ 129   2            WriteOneChar(ROM_D[i]);
+ 130   2          }
+ 131   1          WriteOneChar(0x44); // 启动温度转换   
+ 132   1          DelayMs(800);//（默认）12位分辨率，温度转换时间超过750ms
+ 133   1          
+ 134   1          Init_DS18B20();
+ 135   1          WriteOneChar(0x55); // 匹配序列号的操作,后紧跟64位ROM数据
+ 136   1          for(i=0;i<8;i++)
+ 137   1          {
+ 138   2            WriteOneChar(ROM_D[i]);
+ 139   2          }   
+ 140   1          WriteOneChar(0xBE); //读取温度寄存器,前两个分别是温度的低位和高位 
+ 141   1          
+ 142   1          a=ReadOneChar();   //低位
+ 143   1          b=ReadOneChar();   //高位
+ 144   1          b<<=8;
+ 145   1          t=a|b;
+ 146   1          return(t);
+ 147   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    395    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      8      14
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

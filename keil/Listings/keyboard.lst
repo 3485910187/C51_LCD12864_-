@@ -1,0 +1,58 @@
+C51 COMPILER V9.59.0.0   KEYBOARD                                                          02/27/2023 11:27:36 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE KEYBOARD
+OBJECT MODULE PLACED IN .\Objects\keyboard.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE keyboard.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -keyboard.lst) TABS(2) OBJECT(.\Objects\keyboard.obj)
+
+line level    source
+
+   1          #include"keyboard.h"
+   2          
+   3          unsigned char get_key()
+   4          {
+   5   1          unsigned char row, col;
+   6   1          // 矩阵键盘按键映射数组
+   7   1          unsigned char keypad[4][4] = {
+   8   1              {'1', '2', '3', 'A'},
+   9   1              {'4', '5', '6', 'B'},
+  10   1              {'7', '8', '9', 'C'},
+  11   1              {'*', '0', '#', 'D'}
+  12   1          };
+  13   1      
+  14   1          // 遍历键盘的列
+  15   1          for(col = 0; col < 4; col++)
+  16   1          {
+  17   2              // 设置当前列为输出低电平
+  18   2              KeyData = ~(0x10 << col);
+  19   2      
+  20   2              // 遍历键盘的行
+  21   2              for(row = 0; row < 4; row++)
+  22   2              {
+  23   3                  // 检测当前行是否有输入信号
+  24   3                  if(!(KeyData & (1 << row)))
+  25   3                  {
+  26   4                      // 返回对应的按键值
+  27   4                      return keypad[row][col];
+  28   4                  }
+  29   3              }
+  30   2          }
+  31   1      
+  32   1          // 如果没有按键按下，返回0xff
+  33   1          return 0xff;
+  34   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    101    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      16
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
