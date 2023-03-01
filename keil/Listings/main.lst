@@ -1,24 +1,24 @@
-C51 COMPILER V9.59.0.0   MAIN                                                              02/27/2023 11:27:35 PAGE 1   
+C51 COMPILER V9.59.0.0   MAIN                                                              03/01/2023 15:34:43 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\main.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
-                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\keil) DEBUG OBJECTEXTEND PRINT
+                    -(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
 
 line level    source
 
    1          #include"reg51.h"
    2          #include"12864.h"
    3          #include"keyboard.h"
-   4          #include"18b20.h"
+   4          #include"sht11.h"
    5          
    6          uchar display_password[6]={10,10,10,10,10,10};
    7          uchar password[]={1,2,3,4,5,6};
    8          
    9          char* prt_password=display_password;
   10          uchar mode = 0,error = 0;
-  11          uchar Temperature = 0;
+  11          int Temperature = 0,Humidity = 0;
   12          
   13          void scan_key()
   14          {
@@ -62,7 +62,7 @@ line level    source
   52   2        }
   53   1        else if(keydata == '#') //取消
   54   1        {
-C51 COMPILER V9.59.0.0   MAIN                                                              02/27/2023 11:27:35 PAGE 2   
+C51 COMPILER V9.59.0.0   MAIN                                                              03/01/2023 15:34:43 PAGE 2   
 
   55   2          for(i=0;i<6;i++)
   56   2          {
@@ -93,95 +93,99 @@ line level    source
   81   2          //第一行
   82   2          Display_ZM(1,0,8*0,19);
   83   2          Display_FH(1,0,8*1,4);
-  84   2          Display_SZ(1,0,8*2,Temperature/10);
-  85   2          Display_SZ(1,0,8*3,Temperature%10);
-  86   2          Display_HZ(1,0,8*4,16); 
-  87   2          
-  88   2          Display_ZM(2,0,8*0,7);
-  89   2          Display_FH(2,0,8*1,4);
-  90   2          Display_SZ(2,0,8*2,0);
-  91   2          Display_SZ(2,0,8*3,0);    
-  92   2          Display_FH(2,0,8*4,7);
-  93   2          
-  94   2          //第二行
-  95   2          if(mode == 0 || mode == 1)
-  96   2          {
-  97   3            Display_HZ(1,2,16*0,0);
-  98   3            Display_HZ(1,2,16*1,1);
-  99   3            Display_HZ(1,2,16*2,2);
- 100   3            Display_FH(1,2,16*3,4);   
- 101   3            Display_SZ(1,2,16*3+8,0);
- 102   3            
- 103   3            Display_SZ(2,2,8*0,0);
- 104   3            Display_SZ(2,2,8,1);    
- 105   3          }
- 106   2          else if(mode == 2)
- 107   2          {
- 108   3            Display_HZ(1,2,16*2,12);
- 109   3            Display_HZ(1,2,16*3,13);  
- 110   3            
- 111   3            Display_HZ(2,2,16*0,14);    
- 112   3            Display_HZ(2,2,16*1,15);        
- 113   3          }
- 114   2          
- 115   2          //第三行
- 116   2          if(mode == 0)
-C51 COMPILER V9.59.0.0   MAIN                                                              02/27/2023 11:27:35 PAGE 3   
+  84   2          Display_SZ(1,0,8*2,Temperature/100);
+  85   2          Display_SZ(1,0,8*3,(Temperature/10)%10);
+  86   2          Display_FH(1,0,8*4,11);
+  87   2          Display_SZ(1,0,8*5,Temperature%10);   
+  88   2          Display_HZ(1,0,8*6,16); 
+  89   2          
+  90   2          Display_ZM(2,0,8*0,7);
+  91   2          Display_FH(2,0,8*1,4);
+  92   2          Display_SZ(2,0,8*2,Humidity/100);
+  93   2          Display_SZ(2,0,8*3,(Humidity/10)%10);   
+  94   2          Display_FH(2,0,8*4,11);
+  95   2          Display_SZ(2,0,8*5,Humidity%10);  
+  96   2          Display_FH(2,0,8*6,7);
+  97   2          
+  98   2          //第二行
+  99   2          if(mode == 0 || mode == 1)
+ 100   2          {
+ 101   3            Display_HZ(1,2,16*0,0);
+ 102   3            Display_HZ(1,2,16*1,1);
+ 103   3            Display_HZ(1,2,16*2,2);
+ 104   3            Display_FH(1,2,16*3,4);   
+ 105   3            Display_SZ(1,2,16*3+8,0);
+ 106   3            
+ 107   3            Display_SZ(2,2,8*0,0);
+ 108   3            Display_SZ(2,2,8,1);    
+ 109   3          }
+ 110   2          else if(mode == 2)
+ 111   2          {
+ 112   3            Display_HZ(1,2,16*2,12);
+ 113   3            Display_HZ(1,2,16*3,13);  
+ 114   3            
+ 115   3            Display_HZ(2,2,16*0,14);    
+ 116   3            Display_HZ(2,2,16*1,15);        
+C51 COMPILER V9.59.0.0   MAIN                                                              03/01/2023 15:34:43 PAGE 3   
 
- 117   2          {
- 118   3            Display_SZ(1,4,8*0,display_password[0]);
- 119   3            Display_SZ(1,4,8*1,display_password[1]);
- 120   3            Display_SZ(1,4,8*2,display_password[2]);
- 121   3            Display_SZ(1,4,8*3,display_password[3]);
- 122   3            Display_SZ(1,4,8*4,display_password[4]);
- 123   3            Display_SZ(1,4,8*5,display_password[5]);    
- 124   3            
- 125   3            Display_SZ(2,4,16*3,error);
- 126   3          }
- 127   2          else if(mode == 1)
- 128   2          {
- 129   3            Display_HZ(1,4,16*0,0);
- 130   3            Display_HZ(1,4,16*1,1);
- 131   3            Display_HZ(1,4,16*2,2);   
- 132   3            Display_HZ(1,4,16*3,3);   
- 133   3            
- 134   3            Display_HZ(2,4,16*0,4);   
- 135   3            Display_HZ(2,4,16*1,5);         
- 136   3          }
- 137   2          else if(mode == 2)
- 138   2          {
- 139   3            Display_HZ(1,4,16*1,0);
- 140   3            Display_HZ(1,4,16*2,1);
- 141   3            Display_HZ(1,4,16*3,2);   
- 142   3            
- 143   3            Display_HZ(2,4,16*0,3);   
- 144   3            Display_HZ(2,4,16*1,6);   
- 145   3            Display_HZ(2,4,16*2,7);       
- 146   3          } 
- 147   2          
- 148   2          //第四行
- 149   2          if(mode == 0)
- 150   2          {
- 151   3            Display_HZ(1,6,16*0,8);
- 152   3            Display_HZ(1,6,16*1,9); 
- 153   3      
- 154   3            Display_HZ(2,6,16*2,10);
- 155   3            Display_HZ(2,6,16*3,11);  
- 156   3          }
- 157   2          
- 158   2          Temperature = ReadTemperature_s()/16;
- 159   2          scan_key();
- 160   2      
- 161   2        }
- 162   1      }
+ 117   3          }
+ 118   2          
+ 119   2          //第三行
+ 120   2          if(mode == 0)
+ 121   2          {
+ 122   3            Display_SZ(1,4,8*0,display_password[0]);
+ 123   3            Display_SZ(1,4,8*1,display_password[1]);
+ 124   3            Display_SZ(1,4,8*2,display_password[2]);
+ 125   3            Display_SZ(1,4,8*3,display_password[3]);
+ 126   3            Display_SZ(1,4,8*4,display_password[4]);
+ 127   3            Display_SZ(1,4,8*5,display_password[5]);    
+ 128   3            
+ 129   3            Display_SZ(2,4,16*3,error);
+ 130   3          }
+ 131   2          else if(mode == 1)
+ 132   2          {
+ 133   3            Display_HZ(1,4,16*0,0);
+ 134   3            Display_HZ(1,4,16*1,1);
+ 135   3            Display_HZ(1,4,16*2,2);   
+ 136   3            Display_HZ(1,4,16*3,3);   
+ 137   3            
+ 138   3            Display_HZ(2,4,16*0,4);   
+ 139   3            Display_HZ(2,4,16*1,5);         
+ 140   3          }
+ 141   2          else if(mode == 2)
+ 142   2          {
+ 143   3            Display_HZ(1,4,16*1,0);
+ 144   3            Display_HZ(1,4,16*2,1);
+ 145   3            Display_HZ(1,4,16*3,2);   
+ 146   3            
+ 147   3            Display_HZ(2,4,16*0,3);   
+ 148   3            Display_HZ(2,4,16*1,6);   
+ 149   3            Display_HZ(2,4,16*2,7);       
+ 150   3          } 
+ 151   2          
+ 152   2          //第四行
+ 153   2          if(mode == 0)
+ 154   2          {
+ 155   3            Display_HZ(1,6,16*0,8);
+ 156   3            Display_HZ(1,6,16*1,9); 
+ 157   3      
+ 158   3            Display_HZ(2,6,16*2,10);
+ 159   3            Display_HZ(2,6,16*3,11);  
+ 160   3          }
+ 161   2          
+ 162   2          TH_output(&Temperature,&Humidity);
+ 163   2          scan_key();
+ 164   2      
+ 165   2        }
+ 166   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    843    ----
+   CODE SIZE        =    958    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     26       5
+   DATA SIZE        =     21       5
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

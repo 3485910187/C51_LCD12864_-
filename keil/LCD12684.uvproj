@@ -177,7 +177,7 @@
           </Flash1>
           <bUseTDR>0</bUseTDR>
           <Flash2></Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -324,7 +324,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <IncludePath>..\keil</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -392,14 +392,14 @@
               <FilePath>.\keyboard.c</FilePath>
             </File>
             <File>
-              <FileName>18B20.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\18B20.c</FilePath>
-            </File>
-            <File>
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>sht11.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\sht11.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,10 +1,10 @@
-C51 COMPILER V9.59.0.0   KEYBOARD                                                          02/27/2023 11:27:36 PAGE 1   
+C51 COMPILER V9.59.0.0   KEYBOARD                                                          03/01/2023 15:34:43 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE KEYBOARD
 OBJECT MODULE PLACED IN .\Objects\keyboard.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE keyboard.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
-                    -keyboard.lst) TABS(2) OBJECT(.\Objects\keyboard.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE keyboard.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\keil) DEBUG OBJECTEXTEND P
+                    -RINT(.\Listings\keyboard.lst) TABS(2) OBJECT(.\Objects\keyboard.obj)
 
 line level    source
 

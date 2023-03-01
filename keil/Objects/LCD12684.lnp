@@ -1,7 +1,7 @@
 ".\Objects\main.obj",
 ".\Objects\12864.obj",
 ".\Objects\keyboard.obj",
-".\Objects\18B20.obj",
-".\Objects\delay.obj" 
+".\Objects\delay.obj",
+".\Objects\sht11.obj" 
 TO ".\Objects\LCD12684" 
 PRINT(".\Listings\LCD12684.m51") DISABLEWARNING (16) 

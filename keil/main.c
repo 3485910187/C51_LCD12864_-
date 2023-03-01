@@ -1,14 +1,14 @@
 #include"reg51.h"
 #include"12864.h"
 #include"keyboard.h"
-#include"18b20.h"
+#include"sht11.h"
 
 uchar display_password[6]={10,10,10,10,10,10};
 uchar password[]={1,2,3,4,5,6};
 
 char* prt_password=display_password;
 uchar mode = 0,error = 0;
-uchar Temperature = 0;
+int Temperature = 0,Humidity = 0;
 
 void scan_key()
 {
@@ -81,15 +81,19 @@ void main()
 		//第一行
 		Display_ZM(1,0,8*0,19);
 		Display_FH(1,0,8*1,4);
-		Display_SZ(1,0,8*2,Temperature/10);
-		Display_SZ(1,0,8*3,Temperature%10);
-		Display_HZ(1,0,8*4,16);	
+		Display_SZ(1,0,8*2,Temperature/100);
+		Display_SZ(1,0,8*3,(Temperature/10)%10);
+		Display_FH(1,0,8*4,11);
+		Display_SZ(1,0,8*5,Temperature%10);		
+		Display_HZ(1,0,8*6,16);	
 		
 		Display_ZM(2,0,8*0,7);
 		Display_FH(2,0,8*1,4);
-		Display_SZ(2,0,8*2,0);
-		Display_SZ(2,0,8*3,0);		
-		Display_FH(2,0,8*4,7);
+		Display_SZ(2,0,8*2,Humidity/100);
+		Display_SZ(2,0,8*3,(Humidity/10)%10);		
+		Display_FH(2,0,8*4,11);
+		Display_SZ(2,0,8*5,Humidity%10);	
+		Display_FH(2,0,8*6,7);
 		
 		//第二行
 		if(mode == 0 || mode == 1)
@@ -155,7 +159,7 @@ void main()
 			Display_HZ(2,6,16*3,11);	
 		}
 		
-		Temperature = ReadTemperature_s()/16;
+		TH_output(&Temperature,&Humidity);
 		scan_key();
 
 	}

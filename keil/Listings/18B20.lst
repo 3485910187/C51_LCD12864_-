@@ -1,10 +1,10 @@
-C51 COMPILER V9.59.0.0   18B20                                                             02/27/2023 11:27:36 PAGE 1   
+C51 COMPILER V9.59.0.0   18B20                                                             03/01/2023 15:00:23 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE 18B20
 OBJECT MODULE PLACED IN .\Objects\18B20.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE 18B20.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\18B
-                    -20.lst) TABS(2) OBJECT(.\Objects\18B20.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE 18B20.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\keil) DEBUG OBJECTEXTEND PRIN
+                    -T(.\Listings\18B20.lst) TABS(2) OBJECT(.\Objects\18B20.obj)
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   52   1         {
   53   2            DQ = 0;
   54   2            DelayUs(5);//延时确定15us
-C51 COMPILER V9.59.0.0   18B20                                                             02/27/2023 11:27:36 PAGE 2   
+C51 COMPILER V9.59.0.0   18B20                                                             03/01/2023 15:00:23 PAGE 2   
 
   55   2            DQ = dat&0x01;
   56   2            DelayUs(5);//***采样数据，0：延时0~45us；1：延时0~35us，根据晶振调整，此处约15us***
@@ -126,7 +126,7 @@ line level    source
  114          函数功能: 一个IO口连接多个芯片时，根据序列号读温度
  115          入口参数：ROM_D-芯片序列号
  116          返回参数：t-16位温度数值
-C51 COMPILER V9.59.0.0   18B20                                                             02/27/2023 11:27:36 PAGE 3   
+C51 COMPILER V9.59.0.0   18B20                                                             03/01/2023 15:00:23 PAGE 3   
 
  117          使用方法：初始化
  118          ***************************************************/ 
