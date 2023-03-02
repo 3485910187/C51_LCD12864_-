@@ -10,7 +10,7 @@ void motor_data(unsigned char da)
 	Px3 = (bit)(da & 0x08);	
 }
 
-void motor_angle(uchar angle)
+void motor_angle(int angle)
 {
 	motor_data(st[(angle/45)%8]);
 }

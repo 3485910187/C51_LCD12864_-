@@ -3,6 +3,7 @@
 ".\Objects\keyboard.obj",
 ".\Objects\delay.obj",
 ".\Objects\sht11.obj",
-".\Objects\motor.obj" 
+".\Objects\motor.obj",
+".\Objects\serial.obj" 
 TO ".\Objects\LCD12684" 
 PRINT(".\Listings\LCD12684.m51") DISABLEWARNING (16) 

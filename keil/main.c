@@ -3,13 +3,28 @@
 #include"keyboard.h"
 #include"sht11.h"
 #include"motor.h"
+#include"serial.h"
+#include"delay.h"
+
+sbit LED = P3^2;
+sbit BUZZ = P3^3;
 
 uchar display_password[6]={10,10,10,10,10,10};
 uchar password[]={1,2,3,4,5,6};
 
 char* prt_password=display_password;
-uchar mode = 0,error = 0;
+uchar mode = 0,error = 0,count = 0,buzzmod = 0,serialdata = 0,serial_flag = 0;
 int Temperature = 0,Humidity = 0;
+
+void Timeinit()
+{
+	TMOD = 0x01;
+	TH0 = (65536-50000)/256;
+	TL0 = (65536-50000)%256;	
+	ET0 = 1;
+	EA = 1;
+	TR0 = 1;
+}
 
 void scan_key()
 {
@@ -33,17 +48,32 @@ void scan_key()
 		if(flag == 1)
 		{
 			error++; //密码错误
+			BUZZ = 0;
+			DelayMs(500);
+			BUZZ = 1;
+			Sendstring(1,"error");
+			Sendchar(' ');
+			Sendchar('0'+error);
+			Sendstring(1,"\r\n");
 		}
 		else 
 		{
 			mode = 1; //密码正确
 			error = 0;
+			motor_angle(180);
+			BUZZ = 0;
+			DelayMs(500);
+			BUZZ = 1;
 			ClearScreen(0);
+			Sendstring(1,"correct");
+			Sendstring(1,"\r\n");
 		}
 		if(error == 3)
 		{
 			mode = 2; //锁定
+			LED = 1;
 			ClearScreen(0);
+			Sendstring(5,"error 3");
 		}
 		for(i=0;i<6;i++)
 		{
@@ -63,13 +93,16 @@ void scan_key()
 	{
 		mode = 0;
 		error = 0;
+		motor_angle(0);
 		ClearScreen(0);
 	}
 	else if(keydata == 'B')
 	{
 		mode = 0;
 		error = 0;
+		motor_angle(0);
 		ClearScreen(0);		
+		LED = 0;
 	}
 }
 
@@ -77,6 +110,11 @@ void scan_key()
 void main()
 {
 	InitLCD();
+	Timeinit();
+	Serialinit();
+	motor_angle(0);
+	LED = 0;
+	BUZZ = 1;
 	while(1)
 	{
 		//第一行
@@ -162,8 +200,27 @@ void main()
 		
 		TH_output(&Temperature,&Humidity);
 		scan_key();
-//		motor_angle(360);
-//		motor_direction(1,4000);
-
+		if(Temperature / 10 > 40 || Humidity / 10 > 80)
+		{
+			buzzmod = 20;
+			if(serial_flag == 0)Sendstring(5,"abnormalTH\r\n"),serial_flag = 1;
+		}
+		else buzzmod = 0,BUZZ = 1,serial_flag = 0;
 	}
 }
+
+void Time_interrupt() interrupt 1
+{
+	TH0 = (65536-50000)/256;
+	TL0 = (65536-50000)%256;	
+	if(buzzmod != 0)
+	{	
+		count++;
+		if(count == buzzmod)
+		{
+			BUZZ = !BUZZ;
+			count = 0;
+		}
+	}
+}
+
