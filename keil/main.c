@@ -2,6 +2,7 @@
 #include"12864.h"
 #include"keyboard.h"
 #include"sht11.h"
+#include"motor.h"
 
 uchar display_password[6]={10,10,10,10,10,10};
 uchar password[]={1,2,3,4,5,6};
@@ -161,6 +162,8 @@ void main()
 		
 		TH_output(&Temperature,&Humidity);
 		scan_key();
+//		motor_angle(360);
+//		motor_direction(1,4000);
 
 	}
 }
