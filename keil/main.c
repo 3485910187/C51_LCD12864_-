@@ -18,7 +18,7 @@ int Temperature = 0,Humidity = 0;
 
 void Timeinit()
 {
-	TMOD = 0x01;
+	TMOD = 0x21; //定时器0和1开启；
 	TH0 = (65536-50000)/256;
 	TL0 = (65536-50000)%256;	
 	ET0 = 1;
@@ -96,7 +96,7 @@ void scan_key()
 		motor_angle(0);
 		ClearScreen(0);
 	}
-	else if(keydata == 'B')
+	else if(keydata == 'D')
 	{
 		mode = 0;
 		error = 0;
@@ -216,7 +216,7 @@ void Time_interrupt() interrupt 1
 	if(buzzmod != 0)
 	{	
 		count++;
-		if(count == buzzmod)
+		if(count >= buzzmod)
 		{
 			BUZZ = !BUZZ;
 			count = 0;

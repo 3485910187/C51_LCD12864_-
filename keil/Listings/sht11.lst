@@ -1,4 +1,4 @@
-C51 COMPILER V9.59.0.0   SHT11                                                             03/02/2023 21:14:40 PAGE 1   
+C51 COMPILER V9.59.0.0   SHT11                                                             03/03/2023 16:51:45 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE SHT11
@@ -62,7 +62,7 @@ line level    source
   52          { 
   53   1          Sht11DATA=1; SCK=0;                   //×¼±¸
   54   1          _nop_();
-C51 COMPILER V9.59.0.0   SHT11                                                             03/02/2023 21:14:40 PAGE 2   
+C51 COMPILER V9.59.0.0   SHT11                                                             03/03/2023 16:51:45 PAGE 2   
 
   55   1          SCK=1;
   56   1          _nop_();
@@ -126,7 +126,7 @@ line level    source
  114          char s_write_statusreg(unsigned char *p_value)
  115          // writes the status register with checksum (8-bit)
  116          { 
-C51 COMPILER V9.59.0.0   SHT11                                                             03/02/2023 21:14:40 PAGE 3   
+C51 COMPILER V9.59.0.0   SHT11                                                             03/03/2023 16:51:45 PAGE 3   
 
  117            unsigned char error=0;
  118            s_transstart();                   //transmission start
@@ -190,7 +190,7 @@ line level    source
  176            float logEx,dew_point;
  177            logEx=0.66077+7.5*t/(237.3+t)+(log10(h)-2);
  178            dew_point = (logEx - 0.66077)*237.3/(0.66077+7.5-logEx);
-C51 COMPILER V9.59.0.0   SHT11                                                             03/02/2023 21:14:40 PAGE 4   
+C51 COMPILER V9.59.0.0   SHT11                                                             03/03/2023 16:51:45 PAGE 4   
 
  179            return dew_point;
  180          }   
